@@ -1,0 +1,19 @@
+{% load socialaccount %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light d-flex justify-content-center p-3">
+    <a class="navbar-brand" href="{% url 'home' %}">Мои воспоминания</a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        {% if request.user.is_authenticated %}
+        {{ user.username }}
+        <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="" width="50" class="mx-3 float-left"> <a href="{% url 'account_logout' %}" class="btn btn-danger">Выход</a>
+        {% else %}
+          <div class="row">
+            <div class="col-md-12">
+              <a class="btn btn-outline-dark" href="{% provider_login_url 'google' %}" role="button" style="text-transform:none">
+                <img width="20px" style="margin-bottom:3px; margin-right:5px" alt="Google sign-in" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
+                Login with Google
+              </a>
+            </div>
+          </div>
+        {% endif %}
+    </div>
+</nav>

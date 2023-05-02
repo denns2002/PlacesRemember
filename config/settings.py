@@ -19,9 +19,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+
 SECRET_KEY = os.environ["SECRET_KEY"]
-# SECURITY WARNING: don't run with debug turned on in production!
 
 DEBUG = False
 
@@ -36,7 +35,39 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
+    "django.contrib.gis",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "mapwidgets",
+    "crispy_forms",
+    "crispy_bootstrap5",
+    "memories.apps.MemoriesConfig",
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+GOOGLE_MAP_API_KEY = os.environ["GOOGLE_MAP_API_KEY"]
+
+MAP_WIDGETS = {
+    "GooglePointFieldWidget": (
+        ("zoom", 15),
+        ("mapCenterLocationName", "russia"),
+        ("GooglePlaceAutocompleteOptions", {"componentRestrictions": {"country": "uk"}}),
+        ("markerFitZoom", 12),
+        ("scrollWheel", False),
+        ("streetViewControl", True),
+    ),
+    "GOOGLE_MAP_API_KEY": GOOGLE_MAP_API_KEY,
+}
+
+LOGIN_REDIRECT_URL = "/"
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -53,7 +84,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates"), os.path.join(BASE_DIR, "templates", "allauth")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -72,12 +103,28 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": os.environ["NAME"],
+        "USER": os.environ["USER"],
+        "PASSWORD": os.environ["PASSWORD"],
+        "HOST": os.environ["HOST"],
+        "PORT": os.environ["PORT"],
     }
 }
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
 
 
 # Password validation
@@ -110,13 +157,16 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-STATIC_URL = "static/"
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "/static"),
+]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"

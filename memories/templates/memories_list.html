@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Мои воспоминания :: {{ block.super }}
+{% endblock %}
+
+{% block content %}
+{% include '_nav.html' %}
+<div class="d-flex h-100 p-3 mx-auto flex-column">
+    {% if request.user.is_authenticated %}
+    <a class="btn btn-primary btn-lg" href="{% url 'memory-create' %}">Добавить воспоминание</a>
+    {% if memories %}
+    {% for item in memories %}
+    <div class="card my-3">
+        <div class="card-header">
+            <a href="{{ item.get_absolute_url }}"><h5 class="card-title">{{ item.title }}</h5></a>
+        </div>
+        <div class="card-body">
+            <div class="media">
+                <div class="media-body">
+                    <div class="row g-0">
+                        <div class="col-12">
+                            <p class="card-text">{{ item.comment|safe|linebreaksbr|truncatewords:30 }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            {{ item.created_at|date:"Y-m-d H:i:s" }}
+            <span class="text-primary ms-3">{{ item.created_at|timesince }}</span>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <span>У вас нет ни одного воспоминания.</span>
+    {% endif %}
+    {% else %}
+    <p>Авторизуйтесь, чтобы увидеть воспоминания.</p>
+    {% endif %}
+</div>
+{% endblock %}

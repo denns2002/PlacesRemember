@@ -6,6 +6,4 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
 ]
 
-urlpatterns += [
-    path("", include("memories.urls")),
-]
+urlpatterns += [path("", include("memories.urls"))]
